@@ -70,21 +70,18 @@ pipeline {
                         // Ensure the JAR exists before uploading
                         if (fileExists('target/tp-foyer-1.0.0-SNAPSHOT.jar')) {
                             echo "Uploading artifact to Nexus"
-                            nexusArtifactUploader(
-                                artifacts: [[
-                                    artifactId: 'tp-foyer',
-                                    classifier: '',
-                                    file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar',
-                                    type: 'jar'
-                                ]],
-                                credentialsId: NEXUS_CREDENTIAL_ID,
-                                groupId: 'tn.esprit',
-                                nexusUrl: "${NEXUS_PROTOCOL}://${NEXUS_URL}",
-                                nexusVersion: NEXUS_VERSION,
-                                repository: NEXUS_REPOSITORY,
-                                version: '1.0.0-SNAPSHOT'
-                            )
-                            echo "Artifact uploaded successfully"
+                            nexusArtifactUploader artifacts: [[
+                                artifactId: 'tp-foyer',
+                                classifier: '',
+                                file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar',
+                                type: 'jar'
+                            ]],
+                            credentialsId: NEXUS_CREDENTIAL_ID,
+                            groupId: 'tn.esprit',
+                            nexusUrl: "${NEXUS_PROTOCOL}://${NEXUS_URL}",
+                            nexusVersion: NEXUS_VERSION,
+                            repository: NEXUS_REPOSITORY,
+                            version: '1.0.0-SNAPSHOT'
                         } else {
                             error "JAR file 'target/tp-foyer-1.0.0-SNAPSHOT.jar' not found"
                         }
