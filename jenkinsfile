@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL = 'http://192.168.50.4:8081/repository/foyer/'
+        NEXUS_URL = 'http://192.168.50.4:8081' // Base URL without repository
+        NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
         NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
 
 
@@ -61,28 +62,30 @@ pipeline {
                 }
             }
         }
-         stage('Upload to Nexus') {
-             steps {
-                 script {
-                     nexusArtifactUploader(
-                         artifacts: [
-                             [
-                                 artifactId: 'tp-foyer', // Your artifactId from pom.xml
-                                 classifier: '',         // No classifier
-                                 file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar', // Path to the JAR file
-                                 groupId: 'tn.esprit',  // Your groupId from pom.xml
-                                 version: '1.0.0-SNAPSHOT' // Your version from pom.xml
-                             ]
-                         ],
-                         nexusVersion: 'nexus3',
-                         protocol: 'http',
-                         nexusUrl: "${NEXUS_URL}", // Correct URL
-                         repository: 'foyer', // Your Nexus repository name
-                         credentialsId: "${NEXUS_CREDENTIALS_ID}"
-                     )
-                 }
-             }
-         }
+
+
+        stage('Upload to Nexus') {
+            steps {
+                script {
+                    nexusArtifactUploader(
+                        artifacts: [
+                            [
+                                artifactId: 'tp-foyer', // Your artifactId from pom.xml
+                                classifier: '',         // No classifier
+                                file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar', // Path to the JAR file
+                                groupId: 'tn.esprit',  // Your groupId from pom.xml
+                                version: '1.0.0-SNAPSHOT' // Your version from pom.xml
+                            ]
+                        ],
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: "${NEXUS_URL}/repository/${NEXUS_REPOSITORY}", // Correct URL
+                        repository: "${NEXUS_REPOSITORY}", // Re-using the repository variable
+                        credentialsId: "${NEXUS_CREDENTIALS_ID}"
+                    )
+                }
+            }
+        }
 
         stage('Run Application') {
             steps {
