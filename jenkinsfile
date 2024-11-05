@@ -6,7 +6,6 @@ pipeline {
         NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
         NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
 
-
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
     }
@@ -33,7 +32,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh './mvnw test'
-
             }
         }
 
@@ -63,7 +61,6 @@ pipeline {
             }
         }
 
-
         stage('Upload to Nexus') {
             steps {
                 script {
@@ -79,7 +76,7 @@ pipeline {
                         ],
                         nexusVersion: 'nexus3',
                         protocol: 'http',
-                        nexusUrl: "${NEXUS_URL}/repository/${NEXUS_REPOSITORY}", // Correct URL
+                        nexusUrl: "${NEXUS_URL}/repository/${NEXUS_REPOSITORY}", // Correct URL without double http
                         repository: "${NEXUS_REPOSITORY}", // Re-using the repository variable
                         credentialsId: "${NEXUS_CREDENTIALS_ID}"
                     )
