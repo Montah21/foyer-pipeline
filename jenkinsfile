@@ -63,27 +63,35 @@ pipeline {
             }
         }
 
-          stage('Publish to Nexus') {
+         stage('Publish to Nexus') {
                     steps {
                         script {
                             try {
-                                nexusArtifactUploader artifacts: [[artifactId: 'tp-foyer',  // Replace with your actual artifact ID
-                                                                  classifier: '',
-                                                                  file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar', // Replace with your actual artifact file name
-                                                                  type: 'jar']],
-                                                       credentialsId: NEXUS_CREDENTIAL_ID,
-                                                       groupId: 'tn.esprit', // Replace with your actual group ID
-                                                       nexusUrl: "${NEXUS_PROTOCOL}://${NEXUS_URL}",
-                                                       nexusVersion: NEXUS_VERSION,
-                                                       repository: NEXUS_REPOSITORY,
-                                                       version: '1.0.0-SNAPSHOT' // Use the actual version
+                                // Ensure the JAR exists before uploading
+                                if (fileExists('target/tp-foyer-1.0.0-SNAPSHOT.jar')) {
+                                    nexusArtifactUploader artifacts: [[
+                                        artifactId: 'tp-foyer',
+                                        classifier: '',
+                                        file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar',
+                                        type: 'jar'
+                                    ]],
+                                    credentialsId: NEXUS_CREDENTIAL_ID,
+                                    groupId: 'tn.esprit',
+                                    nexusUrl: "${NEXUS_PROTOCOL}://${NEXUS_URL}",
+                                    nexusVersion: NEXUS_VERSION,
+                                    repository: NEXUS_REPOSITORY,
+                                    version: '1.0.0-SNAPSHOT'
+                                } else {
+                                    error "JAR file 'target/tp-foyer-1.0.0-SNAPSHOT.jar' not found"
+                                }
                             } catch (Exception e) {
                                 echo "Failed to publish to Nexus: ${e.message}"
                                 currentBuild.result = 'FAILURE'
+                                throw e
                             }
                         }
-                     }
-          }
+                    }
+                }
 
 
         stage('Run Application') {
