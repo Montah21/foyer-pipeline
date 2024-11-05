@@ -82,9 +82,9 @@ pipeline {
                                 currentBuild.result = 'FAILURE'
                             }
                         }
-                    }
-                }
-            }
+                     }
+          }
+
 
         stage('Run Application') {
             steps {
