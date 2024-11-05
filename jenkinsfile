@@ -65,6 +65,9 @@ pipeline {
         stage('Publish to Nexus') {
             steps {
                 script {
+                    echo "Publishing to Nexus: ${NEXUS_URL}"
+                    echo "Artifact Path: ${artifactPath}"
+                    echo "Group ID: ${pom.groupId}, Version: ${pom.version}"
                     def pom = readMavenPom file: "pom.xml"
                     def filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
 
