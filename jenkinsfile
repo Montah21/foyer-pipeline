@@ -34,7 +34,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh './mvnw test'
-                sh 'ls -l target/
+                sh 'ls -l target/'
             }
         }
 
