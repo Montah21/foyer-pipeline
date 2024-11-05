@@ -14,6 +14,7 @@ import tn.esprit.tpfoyer.service.IUniversiteService;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 public class UniversiteControllerTest {
     private MockMvc mockMvc;
 
@@ -36,7 +37,7 @@ public class UniversiteControllerTest {
     void testCreateUniversite() throws Exception {
         when(universiteService.addUniversite(any(Universite.class))).thenReturn(universite);
 
-        mockMvc.perform(post("/universites")
+        mockMvc.perform(post("/universite")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nomUniversite\":\"University ABC\",\"adresse\":\"123 Street\"}"))
                 .andExpect(status().isCreated())
@@ -50,7 +51,7 @@ public class UniversiteControllerTest {
     void testGetUniversiteById() throws Exception {
         when(universiteService.retrieveUniversite(1L)).thenReturn(universite);
 
-        mockMvc.perform(get("/universites/1"))
+        mockMvc.perform(get("/universite/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nomUniversite").value("University ABC"))
                 .andExpect(jsonPath("$.adresse").value("123 Street"));
@@ -62,7 +63,7 @@ public class UniversiteControllerTest {
     void testDeleteUniversite() throws Exception {
         doNothing().when(universiteService).removeUniversite(1L);
 
-        mockMvc.perform(delete("/universites/1"))
+        mockMvc.perform(delete("/universite/1"))
                 .andExpect(status().isNoContent());
 
         verify(universiteService, times(1)).removeUniversite(1L);
