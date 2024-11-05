@@ -4,7 +4,7 @@ pipeline {
     environment {
         NEXUS_VERSION = "nexus3"
         NEXUS_PROTOCOL = "http"
-        NEXUS_URL = "192.168.50.4:8081"
+        NEXUS_URL = "192.168.50.4:8083"
         NEXUS_REPOSITORY = "foyer"
         NEXUS_CREDENTIAL_ID = "nexus"
         ARTIFACT_NAME = "eventsProject"
