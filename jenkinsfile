@@ -63,8 +63,45 @@ pipeline {
                 }
             }
         }
+        stage('Push to Nexus') {
+                    steps {
+                        script {
+                            echo "Preparing to push to Nexus"
+                            withCredentials([usernamePassword(credentialsId: "${NEXUS_CREDENTIAL_ID}", passwordVariable: 'NEXUS_PASS', usernameVariable: 'NEXUS_USER')]) {
+                                // Debug output for credentials and Nexus URL
+                                echo "Using Nexus URL: ${NEXUS_URL}"
+                                echo "Using Nexus Repository: ${NEXUS_REPOSITORY}"
+                                echo "Using Nexus User: ${NEXUS_USER}"
 
-        
+                                // Run Maven deploy command
+                                try {
+                                    sh """
+                                    ./mvnw deploy \
+                                    -DaltDeploymentRepository=nexus::default::${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_REPOSITORY}/ \
+                                    -Dusername=${NEXUS_USER} \
+                                    -Dpassword=${NEXUS_PASS} \
+                                    -DskipTests
+                                    """
+                                    echo "Artifact pushed to Nexus successfully"
+                                } catch (Exception e) {
+                                    echo "Failed to push artifact to Nexus: ${e.getMessage()}"
+                                    currentBuild.result = 'FAILURE'
+                                    throw e
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        success {
+                            echo 'Push to Nexus completed successfully'
+                        }
+                        failure {
+                            echo 'Push to Nexus failed'
+                        }
+                    }
+                }
+
+
 
         stage('Run Application') {
             steps {
