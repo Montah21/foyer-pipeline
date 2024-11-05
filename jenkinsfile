@@ -34,13 +34,14 @@ pipeline {
         stage('Test') {
             steps {
                 sh './mvnw test'
-                sh 'ls -l target/'
+
             }
         }
 
         stage('Package') {
             steps {
                 sh './mvnw package'
+                sh 'ls -l target/'
             }
         }
 
