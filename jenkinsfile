@@ -68,15 +68,16 @@ pipeline {
                         artifacts: [
                             [
                                 artifactId: 'tp-foyer', // Your artifactId from pom.xml
-                                classifier: '',         // No classifier
+                                classifier: '',          // No classifier
                                 file: 'target/tp-foyer-1.0.0-SNAPSHOT.jar', // Path to the JAR file
-                                groupId: 'tn.esprit',  // Your groupId from pom.xml
-                                version: '1.0.0-SNAPSHOT' // Your version from pom.xml
+                                groupId: 'tn.esprit',   // Your groupId from pom.xml
+                                version: '1.0.0-SNAPSHOT', // Your version from pom.xml
+                                type: 'jar' // Specify the type if necessary (jar, war, etc.)
                             ]
                         ],
                         nexusVersion: 'nexus3',
                         protocol: 'http',
-                        nexusUrl: "${NEXUS_URL}/repository/${NEXUS_REPOSITORY}", // Correct URL without double http
+                        nexusUrl: "${NEXUS_URL}", // Base URL without repository
                         repository: "${NEXUS_REPOSITORY}", // Re-using the repository variable
                         credentialsId: "${NEXUS_CREDENTIALS_ID}"
                     )
