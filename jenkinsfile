@@ -2,11 +2,8 @@ pipeline {
     agent any
 
     environment {
-         NEXUS_VERSION = "nexus3"
-         NEXUS_PROTOCOL = "http"
-         NEXUS_URL = "192.168.50.4:8081"
-         NEXUS_REPOSITORY = "foyer"
-         NEXUS_CREDENTIAL_ID = "nexus"
+        NEXUS_URL = 'http://192.168.50.4:8081'
+        NEXUS_REPO = 'foyer'
 
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
@@ -65,40 +62,12 @@ pipeline {
 
           stage('Publish to Nexus') {
                     steps {
-                        script {
-                            def pom = readMavenPom file: "pom.xml"
-                            def filesByGlob = findFiles(glob: "target/*.${pom.packaging}")
-
-                            if (filesByGlob.length == 0) {
-                                error "No artifacts found in target directory"
-                            }
-
-                            def artifactPath = filesByGlob[0].path
-                            def artifactExists = fileExists artifactPath
-
-                            sh "ls -l target/"
-
-                            if (artifactExists) {
-                                echo "*** File: ${artifactPath}, group: ${pom.groupId}, packaging: ${pom.packaging}, version ${pom.version}"
-
-                                nexusArtifactUploader(
-                                    nexusVersion: NEXUS_VERSION,
-                                    protocol: NEXUS_PROTOCOL,
-                                    nexusUrl: NEXUS_URL,
-                                    groupId: pom.groupId,
-                                    version: pom.version,
-                                    repository: NEXUS_REPOSITORY,
-                                    credentialsId: NEXUS_CREDENTIAL_ID,
-                                    artifacts: [
-                                        [artifactId: pom.artifactId, classifier: '', file: artifactPath, type: pom.packaging]
-                                    ]
-                                )
-
-                                env.ARTIFACT_PATH = artifactPath
-                            } else {
-                                error "*** File: ${artifactPath}, could not be found"
-                            }
-                        }
+                          echo 'Deploying to Nexus...'
+                                        sh """
+                                            mvn -s /usr/share/maven/conf/settings.xml deploy \
+                                            -DskipTests \
+                                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+                                        """
                     }
                 }
 
