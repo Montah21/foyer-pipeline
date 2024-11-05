@@ -82,16 +82,15 @@
     </build>
     <distributionManagement>
         <repository>
-            <id>deploymentRepo</id>
-            <name>Nexus Repository</name>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+            <id>foyer</id>
+            <name>Nexus Foyer Repository</name>
+            <url>http://192.168.50.4:8081/repository/foyer/</url>
         </repository>
         <snapshotRepository>
-            <id>deploymentRepo</id>
-            <name>snapshots Nexus Repository</name>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <id>foyer-snapshots</id>
+            <name>Nexus Foyer Snapshots Repository</name>
+            <url>http://192.168.50.4:8081/repository/foyer-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
 
 </project>
