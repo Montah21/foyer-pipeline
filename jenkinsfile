@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         NEXUS_URL = 'http://192.168.50.4:8081' // Base URL without repository
-        NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
-        NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
+        NEXUS_REPOSITORY = 'maven-releases' // Your Nexus repository name
+        NEXUS_CREDENTIALS_ID = 'nexus6' // The ID you set for your credentials
 
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Mockito Test') {
+        stage('Mockito test') {
             steps {
                 sh './mvnw test'
             }
@@ -121,30 +121,16 @@ pipeline {
             }
         }
 
-        stage('Deploy to Nexus') {
-            steps {
-                script {
-                    echo 'Deploying to Nexus Repository...'
-
-                    withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
-                        sh '''
-                            ./mvnw clean deploy -DskipTests \
-                            -Dmaven.deploy.skip=false \
-                            -DrepositoryId=deploymentRepo \
-                            -Durl=$NEXUS_URL/repository/$NEXUS_REPOSITORY
-                        '''
+         stage('Nexus') {
+                    steps {
+                        echo 'Deploying to Nexus...'
+                        sh """
+                            mvn -s /usr/share/maven/conf/settings.xml deploy \
+                            -DskipTests \
+                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+                        """
                     }
                 }
-            }
-            post {
-                success {
-                    echo 'Deployment to Nexus Repository completed successfully'
-                }
-                failure {
-                    echo 'Deployment to Nexus Repository failed'
-                }
-            }
-        }
 
         stage('Push to Docker Hub') {
             steps {
