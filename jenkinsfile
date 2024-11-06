@@ -3,8 +3,10 @@ pipeline {
 
     environment {
         NEXUS_URL = 'http://192.168.50.4:8081' // Base URL without repository
-        NEXUS_REPOSITORY = 'maven-releases' // Your Nexus repository name
-        NEXUS_CREDENTIALS_ID = 'nexus6' // The ID you set for your credentials
+        NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
+        NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
+
+
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
     }
@@ -31,6 +33,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh './mvnw test'
+
             }
         }
 
@@ -52,33 +55,6 @@ pipeline {
             }
         }
 
-        // Nexus deployment stage moved after SonarQube
-        stage('Deploy to Nexus') {
-            steps {
-                script {
-                    echo "Deploying to Nexus Repository"
-                    sh """
-                        mvn deploy:deploy-file \
-                        -Dfile=target/${project.artifactId}-${project.version}.jar \
-                        -DrepositoryId=nexus6 \
-                        -Durl=http://192.168.50.4:8081/repository/maven-releases/ \
-                        -DgroupId=tn.esprit.tpfoyer \
-                        -DartifactId=foyer-pipeline \
-                        -Dversion=${env.BUILD_NUMBER} \
-                        -Dpackaging=jar
-                    """
-                }
-            }
-            post {
-                success {
-                    echo 'Successfully deployed to Nexus Repository'
-                }
-                failure {
-                    echo 'Nexus Deployment failed'
-                }
-            }
-        }
-
         stage('Building Docker Image') {
             steps {
                 script {
@@ -86,6 +62,9 @@ pipeline {
                 }
             }
         }
+
+
+
 
         stage('Run Application') {
             steps {
@@ -174,7 +153,6 @@ pipeline {
                 }
             }
         }
-
     }
 
     post {
