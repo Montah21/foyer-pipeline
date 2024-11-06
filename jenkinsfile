@@ -30,7 +30,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Test Mockito') {
             steps {
                 sh './mvnw test'
 
