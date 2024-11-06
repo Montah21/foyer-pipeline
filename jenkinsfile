@@ -6,7 +6,7 @@ pipeline {
         NEXUS_REPO = 'foyer'
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer"
-
+        NEXUS_CREDENTIALS_ID = 'nexus6'// Replace with your Docker Hub repository
     }
 
     stages {
@@ -60,15 +60,14 @@ pipeline {
             }
         }
 
-          stage('Publish to Nexus') {
-              steps {
-                  echo 'Deploying to Nexus...'
-                  sh """
-                      mvn deploy -DskipTests
-                  """
-              }
-          }
-
+        stage('Publish to Nexus') {
+            steps {
+                echo 'Deploying to Nexus...'
+                sh """
+                    mvn -X deploy -DskipTests -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+                """
+            }
+        }
 
         stage('Run Application') {
             steps {
