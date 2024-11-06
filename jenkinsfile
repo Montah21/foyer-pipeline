@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL = 'http://192.168.50.4:8081' // Base URL without repository
-        NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
-        NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
-
-
+        NEXUS_URL = 'http://192.168.50.4:8081'
+        NEXUS_REPO = 'maven-releases'
+        NEXUS_CREDENTIALS_ID = 'nexus6'
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
     }
@@ -54,6 +52,16 @@ pipeline {
                 }
             }
         }
+         stage('Nexus') {
+                    steps {
+                        echo 'Deploying to Nexus...'
+                        sh """
+                            mvn -s /usr/share/maven/conf/settings.xml deploy \
+                            -DskipTests \
+                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+                        """
+                    }
+                }
 
         stage('Building Docker Image') {
             steps {
