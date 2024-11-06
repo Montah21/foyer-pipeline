@@ -6,7 +6,6 @@ pipeline {
         NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
         NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
 
-
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
     }
@@ -30,10 +29,9 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Mockito Test') {
             steps {
                 sh './mvnw test'
-
             }
         }
 
@@ -62,9 +60,6 @@ pipeline {
                 }
             }
         }
-
-
-
 
         stage('Run Application') {
             steps {
@@ -126,6 +121,31 @@ pipeline {
             }
         }
 
+        stage('Deploy to Nexus') {
+            steps {
+                script {
+                    echo 'Deploying to Nexus Repository...'
+
+                    withCredentials([usernamePassword(credentialsId: NEXUS_CREDENTIALS_ID, usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        sh '''
+                            ./mvnw clean deploy -DskipTests \
+                            -Dmaven.deploy.skip=false \
+                            -DrepositoryId=deploymentRepo \
+                            -Durl=$NEXUS_URL/repository/$NEXUS_REPOSITORY
+                        '''
+                    }
+                }
+            }
+            post {
+                success {
+                    echo 'Deployment to Nexus Repository completed successfully'
+                }
+                failure {
+                    echo 'Deployment to Nexus Repository failed'
+                }
+            }
+        }
+
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -162,3 +182,4 @@ pipeline {
         }
     }
 }
+
