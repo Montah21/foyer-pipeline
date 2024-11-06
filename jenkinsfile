@@ -61,16 +61,14 @@ pipeline {
         }
 
           stage('Publish to Nexus') {
-                    steps {
-                          echo 'Deploying to Nexus...'
-                                        sh """
-                                            mvn -s /usr/share/maven/conf/settings.xml deploy \
-                                            -DskipTests \
-                                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+              steps {
+                  echo 'Deploying to Nexus...'
+                  sh """
+                      mvn deploy -DskipTests
+                  """
+              }
+          }
 
-                                        """
-                    }
-                }
 
         stage('Run Application') {
             steps {
