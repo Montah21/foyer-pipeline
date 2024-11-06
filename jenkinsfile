@@ -65,7 +65,7 @@ pipeline {
                                         sh """
                                             mvn -s /usr/share/maven/conf/settings.xml deploy \
                                             -DskipTests \
-                                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}
+                                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
 
                                         """
                     }
