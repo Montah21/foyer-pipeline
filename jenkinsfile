@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         NEXUS_URL = 'http://192.168.50.4:8081' // Base URL without repository
-        NEXUS_REPOSITORY = 'maven-releases' // Your Nexus repository name
-        NEXUS_CREDENTIALS_ID = 'nexus6' // The ID you set for your credentials
+        NEXUS_REPOSITORY = 'foyer' // Your Nexus repository name
+        NEXUS_CREDENTIALS_ID = 'nexus' // The ID you set for your credentials
+
 
         DOCKER_HUB_CREDENTIAL_ID = "dockerhub"
         DOCKER_HUB_REPO = "montahb21/tp-foyer" // Replace with your Docker Hub repository
@@ -29,9 +30,10 @@ pipeline {
             }
         }
 
-        stage('Mockito test') {
+        stage('Test') {
             steps {
                 sh './mvnw test'
+
             }
         }
 
@@ -60,6 +62,9 @@ pipeline {
                 }
             }
         }
+
+
+
 
         stage('Run Application') {
             steps {
@@ -121,17 +126,6 @@ pipeline {
             }
         }
 
-         stage('Nexus') {
-                    steps {
-                        echo 'Deploying to Nexus...'
-                        sh """
-                            mvn -s /usr/share/maven/conf/settings.xml deploy \
-                            -DskipTests \
-                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
-                        """
-                    }
-                }
-
         stage('Push to Docker Hub') {
             steps {
                 script {
@@ -168,4 +162,3 @@ pipeline {
         }
     }
 }
-
