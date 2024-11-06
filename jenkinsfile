@@ -52,16 +52,7 @@ pipeline {
                 }
             }
         }
-         stage('Nexus') {
-                    steps {
-                        echo 'Deploying to Nexus...'
-                        sh """
-                            mvn -s /usr/share/maven/conf/settings.xml deploy \
-                            -DskipTests \
-                            -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
-                        """
-                    }
-                }
+//
 
         stage('Building Docker Image') {
             steps {
@@ -170,3 +161,13 @@ pipeline {
         }
     }
 }
+//         stage('Nexus') {
+        //                     steps {
+        //                         echo 'Deploying to Nexus...'
+        //                         sh """
+        //                             mvn -s /usr/share/maven/conf/settings.xml deploy \
+        //                             -DskipTests \
+        //                             -DaltDeploymentRepository=deploymentRepo::default::${NEXUS_URL}/repository/${NEXUS_REPO}/
+        //                         """
+        //                     }
+        //                 }
